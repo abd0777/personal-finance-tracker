@@ -16,11 +16,20 @@ import {
 } from "recharts";
 import axios from "axios";
 
+// ✅ Type for transaction
+type Transaction = {
+  _id: string;
+  amount: string;
+  date: string;
+  description: string;
+  category: string;
+};
+
 const categories = ["Food", "Transport", "Utilities", "Entertainment", "Other"];
 const colors = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1"];
 
 export default function HomePage() {
-  const [transactions, setTransactions] = useState([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [form, setForm] = useState({
     amount: "",
     date: "",
@@ -38,8 +47,11 @@ export default function HomePage() {
   };
 
   const handleAdd = async () => {
-    if (!form.amount || !form.date || !form.description)
-      return alert("All fields required");
+    if (!form.amount || !form.date || !form.description) {
+      alert("All fields required");
+      return;
+    }
+
     await axios.post("http://localhost:5000/api/transactions", form);
     setForm({ amount: "", date: "", description: "", category: categories[0] });
     fetchTransactions();
@@ -50,12 +62,14 @@ export default function HomePage() {
     fetchTransactions();
   };
 
-  const monthData = transactions.reduce((acc, tx) => {
+  // ✅ Monthly data summary
+  const monthData = transactions.reduce((acc: Record<string, number>, tx) => {
     const month = tx.date.slice(0, 7);
     acc[month] = (acc[month] || 0) + Number(tx.amount);
     return acc;
   }, {});
 
+  // ✅ Category pie chart data
   const pieData = categories.map((cat) => ({
     name: cat,
     value: transactions
@@ -72,6 +86,7 @@ export default function HomePage() {
         <CardContent className="flex flex-col gap-2 p-4">
           <Input
             placeholder="Amount"
+            type="number"
             value={form.amount}
             onChange={(e) => setForm({ ...form, amount: e.target.value })}
           />
@@ -101,17 +116,17 @@ export default function HomePage() {
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 font-medium">
             Total: ₹{transactions.reduce((a, b) => a + Number(b.amount), 0)}
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 font-medium">
             Most Recent: ₹{transactions[transactions.length - 1]?.amount || 0}
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4">
+          <CardContent className="p-4 font-medium">
             Total Entries: {transactions.length}
           </CardContent>
         </Card>
@@ -144,6 +159,7 @@ export default function HomePage() {
             cx="50%"
             cy="50%"
             outerRadius={80}
+            label
           >
             {pieData.map((_, idx) => (
               <Cell key={idx} fill={colors[idx % colors.length]} />
