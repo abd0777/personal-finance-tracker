@@ -1,0 +1,39 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error(err));
+
+const Transaction = require('./models/Transaction');
+
+// GET all transactions
+app.get('/api/transactions', async (req, res) => {
+  const txs = await Transaction.find();
+  res.json(txs);
+});
+
+// POST new transaction
+app.post('/api/transactions', async (req, res) => {
+  const tx = await Transaction.create(req.body);
+  res.json(tx);
+});
+
+// DELETE transaction
+app.delete('/api/transactions/:id', async (req, res) => {
+  await Transaction.findByIdAndDelete(req.params.id);
+  res.json({ success: true });
+});
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
