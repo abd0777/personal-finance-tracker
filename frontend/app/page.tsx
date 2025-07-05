@@ -45,9 +45,9 @@ export default function HomePage() {
     fetchTransactions();
   };
 
-  const handleDelete = async (id) => {
-   await axios.delete(`http://localhost:5000/api/transactions/${id}`);
-   fetchTransactions();
+  const handleDelete = async (id: string) => {
+    await axios.delete(`http://localhost:5000/api/transactions/${id}`);
+    fetchTransactions();
   };
 
   const monthData = transactions.reduce((acc, tx) => {
@@ -169,4 +169,4 @@ export default function HomePage() {
       </ul>
     </div>
   );
-} 
+}
