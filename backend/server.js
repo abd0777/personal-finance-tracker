@@ -6,9 +6,19 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// ✅ Allowed CORS origins (replace with your actual frontend Vercel URL)
+const allowedOrigins = [
+  "https://your-frontend.vercel.app", // Replace this with your real frontend domain
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
 app.use(express.json());
 
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -16,7 +26,10 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
 
+// ✅ Load Transaction model
 const Transaction = require('./models/Transaction');
+
+// ✅ API Routes
 
 // GET all transactions
 app.get('/api/transactions', async (req, res) => {
@@ -36,4 +49,5 @@ app.delete('/api/transactions/:id', async (req, res) => {
   res.json({ success: true });
 });
 
+// ✅ Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
