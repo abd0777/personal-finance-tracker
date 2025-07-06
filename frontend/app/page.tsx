@@ -1,4 +1,3 @@
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 "use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import axios from "axios";
-
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 // ✅ Type for transaction
 type Transaction = {
   _id: string;
