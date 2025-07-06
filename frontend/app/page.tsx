@@ -1,3 +1,4 @@
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 "use client";
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -41,26 +42,25 @@ export default function HomePage() {
     fetchTransactions();
   }, []);
 
-  const fetchTransactions = async () => {
-    const res = await axios.get("http://localhost:5000/api/transactions");
-    setTransactions(res.data);
-  };
+ const fetchTransactions = async () => {
+  const res = await axios.get(`${baseUrl}/transactions`);
+  setTransactions(res.data);
+};
 
-  const handleAdd = async () => {
-    if (!form.amount || !form.date || !form.description) {
-      alert("All fields required");
-      return;
-    }
+const handleAdd = async () => {
+  if (!form.amount || !form.date || !form.description) {
+    alert("All fields required");
+    return;
+  }
+  await axios.post(`${baseUrl}/transactions`, form);
+  setForm({ amount: "", date: "", description: "", category: categories[0] });
+  fetchTransactions();
+};
 
-    await axios.post("http://localhost:5000/api/transactions", form);
-    setForm({ amount: "", date: "", description: "", category: categories[0] });
-    fetchTransactions();
-  };
-
-  const handleDelete = async (id: string) => {
-    await axios.delete(`http://localhost:5000/api/transactions/${id}`);
-    fetchTransactions();
-  };
+const handleDelete = async (id: string) => {
+  await axios.delete(`${baseUrl}/transactions/${id}`);
+  fetchTransactions();
+};
 
   // ✅ Monthly data summary
   const monthData = transactions.reduce((acc: Record<string, number>, tx) => {
