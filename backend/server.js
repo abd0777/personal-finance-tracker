@@ -8,7 +8,8 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ Allowed CORS origins (replace with your actual frontend Vercel URL)
 const allowedOrigins = [
-  "https://your-frontend.vercel.app", // Replace this with your real frontend domain
+  "https://personal-finance-tracker-dgoitx7cv-abduls-projects-c389ef07.vercel.app",
+  "https://personal-finance-tracker-pearl-theta.vercel.app",
 ];
 
 app.use(cors({
